@@ -1,42 +1,132 @@
-import React from 'react';
-import { Star, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Star, Sparkles, Heart, Eye, ShoppingCart } from 'lucide-react';
 import './ProductCard.css';
 
 const ProductCard = ({ product, onClick, isRecommended = false }) => {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [imageError, setImageError] = useState(false);
+
   // Check if the image is a URL
-  const isUrl = product.image.startsWith('http');
+  const isUrl = typeof product.image === 'string' && product.image.startsWith('http');
+  
+  const handleWishlistClick = (e) => {
+    e.stopPropagation();
+    setIsWishlisted(!isWishlisted);
+  };
+
+  const handleQuickView = (e) => {
+    e.stopPropagation();
+    onClick(product);
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    // Add to cart logic here
+    console.log('Added to cart:', product.name);
+  };
+
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
   return (
     <div 
+      className={`product-card ${isRecommended ? 'product-card-recommended' : ''}`}
       onClick={() => onClick(product)}
-      className="product-card"
     >
-      {isRecommended && (
-        <div className="recommended-badge">
-          <Sparkles size={12} />
-          <span>Recommended</span>
-        </div>
-      )}
-
-      {/* Image / Emoji */}
-      <div className="product-image">
-        {isUrl ? (
-          <img src={product.image} alt={product.name} />
-        ) : (
-          <span className="emoji">{product.image}</span>
+      {/* Badges */}
+      <div className="product-badges">
+        {isRecommended && (
+          <div className="badge badge-recommended">
+            <Sparkles size={12} />
+            <span>Recommended</span>
+          </div>
+        )}
+        {product.discount && (
+          <div className="badge badge-discount">
+            -{product.discount}%
+          </div>
+        )}
+        {product.isNew && (
+          <div className="badge badge-new">
+            New
+          </div>
         )}
       </div>
 
+      {/* Wishlist Button */}
+      <button 
+        className={`wishlist-btn ${isWishlisted ? 'wishlist-btn-active' : ''}`}
+        onClick={handleWishlistClick}
+        aria-label="Add to wishlist"
+      >
+        <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
+      </button>
+
+      {/* Image / Emoji */}
+      <div className="product-image">
+        {isUrl && !imageError ? (
+          <img 
+            src={product.image} 
+            alt={product.name}
+            onError={handleImageError}
+            loading="lazy"
+          />
+        ) : (
+          <span className="emoji">{imageError ? '🖼️' : product.image}</span>
+        )}
+        
+        {/* Hover Overlay with Quick Actions */}
+        <div className="product-overlay">
+          <button 
+            className="overlay-btn btn-quick-view"
+            onClick={handleQuickView}
+            aria-label="Quick view"
+          >
+            <Eye size={18} />
+            <span>Quick View</span>
+          </button>
+          <button 
+            className="overlay-btn btn-add-cart"
+            onClick={handleAddToCart}
+            aria-label="Add to cart"
+          >
+            <ShoppingCart size={18} />
+            <span>Add to Cart</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Product Info */}
       <div className="product-info">
+        <div className="product-category">{product.category}</div>
         <h3 className="product-name">{product.name}</h3>
         <p className="product-description">{product.description}</p>
-        <div className="product-category">{product.category}</div>
+        
+        {/* Tags */}
+        {product.tags && product.tags.length > 0 && (
+          <div className="product-tags">
+            {product.tags.slice(0, 2).map((tag, index) => (
+              <span key={index} className="product-tag">#{tag}</span>
+            ))}
+          </div>
+        )}
+
+        {/* Footer */}
         <div className="product-footer">
           <div className="product-rating">
             <Star size={14} fill="currentColor" />
-            <span>{product.rating}</span>
+            <span className="rating-value">{product.rating}</span>
+            {product.reviewCount && (
+              <span className="rating-count">({product.reviewCount})</span>
+            )}
           </div>
-          <div className="product-price">${product.price}</div>
+          <div className="product-price-container">
+            {product.originalPrice && (
+              <div className="product-original-price">${product.originalPrice}</div>
+            )}
+            <div className="product-price">${product.price}</div>
+          </div>
         </div>
       </div>
     </div>
