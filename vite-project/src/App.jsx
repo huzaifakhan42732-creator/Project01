@@ -131,7 +131,7 @@ const App = () => {
                 onToggleFilters={handleToggleFilters}
               />
 
-              {/* Search History */}
+              {/* Search History agxaui*/}
               {searchQuery === '' && (
                 <SearchHistory
                   history={searchHistory}
