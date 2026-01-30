@@ -120,7 +120,7 @@ const App = () => {
         <div className="container">
           <div className="hero-content">
             <h2 className="hero-title">Discover Your Perfect Products</h2>
-            <p className="hero-subtitle">Smart search with personalized recommendations just for you</p>
+            <p className="hero-subtitle">Smart search... with personalized recommendations just for you</p>
             
             {/* Search Container */}
             <div className="search-container">
