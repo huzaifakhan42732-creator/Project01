@@ -1,1 +1,1 @@
-Random reat project
+Random project
