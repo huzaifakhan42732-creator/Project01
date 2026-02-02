@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { X, Star, ShoppingBag, Heart, Share2, Minus, Plus, Truck, Shield, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  X, Star, ShoppingBag, Heart, Share2, Minus, Plus,
+  Truck, Shield, RotateCcw, ChevronLeft, ChevronRight
+} from 'lucide-react';
 import './Productdetail.css';
 
 const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
@@ -11,16 +14,17 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
 
-  // Mock data for demonstration
   const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
   const colors = ['Black', 'White', 'Navy', 'Gray', 'Beige'];
-  const images = [product.image, product.image, product.image]; // In real app, product would have multiple images
+  
+  // Ensure product.images is an array; if not, fallback to single image
+  const images = product.images && product.images.length > 0 
+    ? product.images 
+    : [product.image];
 
   useEffect(() => {
     onAddToViewed(product.id);
-    // Trigger entrance animation
     setIsAnimating(true);
-    // Prevent body scroll when modal is open
     document.body.style.overflow = 'hidden';
     
     return () => {
@@ -53,14 +57,19 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
         </button>
 
         <div className="modal-body">
-          {/* Image Gallery Section */}
+          {/* Image Gallery */}
           <div className="modal-image-section">
             <div className="image-gallery">
               <div className="main-image-container">
                 <div className="main-image">
-                  {images[currentImageIndex]}
+                  <img
+                    src={images[currentImageIndex]}
+                    alt={`${product.name} image ${currentImageIndex + 1}`}
+                    loading="lazy"
+                    onError={(e) => e.target.src = 'https://via.placeholder.com/400'}
+                  />
                 </div>
-                
+
                 {images.length > 1 && (
                   <>
                     <button className="image-nav-btn prev-btn" onClick={handlePrevImage} aria-label="Previous image">
@@ -91,14 +100,20 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
                     className={`thumbnail ${index === currentImageIndex ? 'thumbnail-active' : ''}`}
                     onClick={() => setCurrentImageIndex(index)}
                   >
-                    {image}
+                    <img
+                      src={image}
+                      alt={`${product.name} thumbnail ${index + 1}`}
+                      loading="lazy"
+                      onError={(e) => e.target.src = 'https://via.placeholder.com/100'}
+                    />
                   </div>
                 ))}
               </div>
             </div>
 
+            {/* Actions */}
             <div className="image-actions">
-              <button 
+              <button
                 className={`action-btn ${isFavorite ? 'action-btn-active' : ''}`}
                 onClick={() => setIsFavorite(!isFavorite)}
                 aria-label="Add to favorites"
@@ -111,19 +126,19 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
             </div>
           </div>
 
-          {/* Product Details Section */}
+          {/* Product Details */}
           <div className="modal-details">
             <div className="modal-header">
               <div className="modal-category">{product.category}</div>
               <div className="modal-rating">
                 <Star size={18} fill="currentColor" />
                 <span className="rating-value">{product.rating}</span>
-                <span className="rating-count">(248 reviews)</span>
+                <span className="rating-count">({product.reviews || 0} reviews)</span>
               </div>
             </div>
 
             <h2 className="modal-title">{product.name}</h2>
-            
+
             <div className="modal-price-section">
               <div className="modal-price">${product.price}</div>
               {product.originalPrice && (
@@ -146,9 +161,7 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
                     className={`color-btn ${selectedColor === color ? 'color-btn-active' : ''}`}
                     onClick={() => setSelectedColor(color)}
                     aria-label={`Select ${color}`}
-                    style={{
-                      background: color.toLowerCase() === 'white' ? '#f5f5f5' : color.toLowerCase()
-                    }}
+                    style={{ background: color.toLowerCase() === 'white' ? '#f5f5f5' : color.toLowerCase() }}
                   >
                     {selectedColor === color && <span className="color-check">✓</span>}
                   </button>
@@ -172,72 +185,48 @@ const ProductDetailModal = ({ product, onClose, onAddToViewed }) => {
               </div>
             </div>
 
-            {/* Quantity Selector */}
+            {/* Quantity */}
             <div className="option-group">
               <label className="option-label">Quantity</label>
               <div className="quantity-selector">
-                <button 
-                  className="quantity-btn"
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={quantity === 1}
-                  aria-label="Decrease quantity"
-                >
+                <button className="quantity-btn" onClick={() => handleQuantityChange(-1)} disabled={quantity === 1}>
                   <Minus size={16} />
                 </button>
                 <span className="quantity-value">{quantity}</span>
-                <button 
-                  className="quantity-btn"
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={quantity === 10}
-                  aria-label="Increase quantity"
-                >
+                <button className="quantity-btn" onClick={() => handleQuantityChange(1)} disabled={quantity === 10}>
                   <Plus size={16} />
                 </button>
               </div>
             </div>
 
-            {/* Action Buttons */}
+            {/* Actions */}
             <div className="modal-actions">
-              <button 
-                className={`btn-primary ${addedToCart ? 'btn-success' : ''}`}
-                onClick={handleAddToCart}
-              >
+              <button className={`btn-primary ${addedToCart ? 'btn-success' : ''}`} onClick={handleAddToCart}>
                 <ShoppingBag size={18} />
                 {addedToCart ? 'Added to Cart!' : 'Add to Cart'}
               </button>
-              <button className="btn-secondary">
-                Buy Now
-              </button>
+              <button className="btn-secondary">Buy Now</button>
             </div>
 
-            {/* Product Features */}
+            {/* Features */}
             <div className="product-features">
               <div className="feature-item">
                 <Truck size={20} />
-                <div className="feature-text">
-                  <strong>Free Shipping</strong>
-                  <span>On orders over $100</span>
-                </div>
+                <div className="feature-text"><strong>Free Shipping</strong><span>On orders over $100</span></div>
               </div>
               <div className="feature-item">
                 <RotateCcw size={20} />
-                <div className="feature-text">
-                  <strong>Easy Returns</strong>
-                  <span>30-day return policy</span>
-                </div>
+                <div className="feature-text"><strong>Easy Returns</strong><span>30-day return policy</span></div>
               </div>
               <div className="feature-item">
                 <Shield size={20} />
-                <div className="feature-text">
-                  <strong>Secure Payment</strong>
-                  <span>100% secure checkout</span>
-                </div>
+                <div className="feature-text"><strong>Secure Payment</strong><span>100% secure checkout</span></div>
               </div>
             </div>
 
             {/* Tags */}
             <div className="modal-tags">
-              {product.tags.map(tag => (
+              {product.tags && product.tags.map(tag => (
                 <span key={tag} className="tag">#{tag}</span>
               ))}
             </div>

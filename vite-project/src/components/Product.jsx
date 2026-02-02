@@ -6,9 +6,6 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  // Check if the image is a URL
-  const isUrl = typeof product.image === 'string' && product.image.startsWith('http');
-  
   const handleWishlistClick = (e) => {
     e.stopPropagation();
     setIsWishlisted(!isWishlisted);
@@ -21,7 +18,6 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    // Add to cart logic here
     console.log('Added to cart:', product.name);
   };
 
@@ -30,7 +26,7 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
   };
 
   return (
-    <div 
+    <div
       className={`product-card ${isRecommended ? 'product-card-recommended' : ''}`}
       onClick={() => onClick(product)}
     >
@@ -42,11 +38,13 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
             <span>Recommended</span>
           </div>
         )}
+
         {product.discount && (
           <div className="badge badge-discount">
             -{product.discount}%
           </div>
         )}
+
         {product.isNew && (
           <div className="badge badge-new">
             New
@@ -54,8 +52,8 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
         )}
       </div>
 
-      {/* Wishlist Button */}
-      <button 
+      {/* Wishlist */}
+      <button
         className={`wishlist-btn ${isWishlisted ? 'wishlist-btn-active' : ''}`}
         onClick={handleWishlistClick}
         aria-label="Add to wishlist"
@@ -63,33 +61,32 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
         <Heart size={18} fill={isWishlisted ? 'currentColor' : 'none'} />
       </button>
 
-      {/* Image / Emoji */}
+      {/* Product Image */}
       <div className="product-image">
-        {isUrl && !imageError ? (
-          <img 
-            src={product.image} 
+        {!imageError ? (
+          <img
+            src={product.image}
             alt={product.name}
             onError={handleImageError}
             loading="lazy"
           />
         ) : (
-          <span className="emoji">{imageError ? '🖼️' : product.image}</span>
+          <span className="emoji">🖼️</span>
         )}
-        
-        {/* Hover Overlay with Quick Actions */}
+
+        {/* Overlay Actions */}
         <div className="product-overlay">
-          <button 
+          <button
             className="overlay-btn btn-quick-view"
             onClick={handleQuickView}
-            aria-label="Quick view"
           >
             <Eye size={18} />
             <span>Quick View</span>
           </button>
-          <button 
+
+          <button
             className="overlay-btn btn-add-cart"
             onClick={handleAddToCart}
-            aria-label="Add to cart"
           >
             <ShoppingCart size={18} />
             <span>Add to Cart</span>
@@ -102,12 +99,14 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
         <div className="product-category">{product.category}</div>
         <h3 className="product-name">{product.name}</h3>
         <p className="product-description">{product.description}</p>
-        
+
         {/* Tags */}
-        {product.tags && product.tags.length > 0 && (
+        {product.tags && (
           <div className="product-tags">
             {product.tags.slice(0, 2).map((tag, index) => (
-              <span key={index} className="product-tag">#{tag}</span>
+              <span key={index} className="product-tag">
+                #{tag}
+              </span>
             ))}
           </div>
         )}
@@ -117,13 +116,16 @@ const ProductCard = ({ product, onClick, isRecommended = false }) => {
           <div className="product-rating">
             <Star size={14} fill="currentColor" />
             <span className="rating-value">{product.rating}</span>
-            {product.reviewCount && (
-              <span className="rating-count">({product.reviewCount})</span>
+            {product.reviews && (
+              <span className="rating-count">({product.reviews})</span>
             )}
           </div>
+
           <div className="product-price-container">
             {product.originalPrice && (
-              <div className="product-original-price">${product.originalPrice}</div>
+              <div className="product-original-price">
+                ${product.originalPrice}
+              </div>
             )}
             <div className="product-price">${product.price}</div>
           </div>

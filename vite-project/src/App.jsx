@@ -4,7 +4,6 @@ import { TrendingUp, Eye } from 'lucide-react';
 // Components
 import Header from './components/Header.jsx';
 import SearchBar from './components/Searchbar.jsx';
-import SearchHistory from './components/SearchResults.jsx';
 import ProductGrid from './components/ProductGrid.jsx';
 import ProductDetailModal from './components/Productdetail.jsx';
 import Footer from './components/Footer.jsx';
@@ -131,14 +130,7 @@ const App = () => {
                 onToggleFilters={handleToggleFilters}
               />
 
-              {/* Search History agxaui*/}
-              {searchQuery === '' && (
-                <SearchHistory
-                  history={searchHistory}
-                  onSelectHistory={handleSelectHistory}
-                  onClearHistory={handleClearHistory}
-                />
-              )}
+            
             </div>
 
             {/* Filters Panel */}
